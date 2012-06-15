@@ -1,0 +1,21 @@
+project Concurrent is
+
+   for Source_Dirs use (".");
+   for Main use ("concurrent.adb");
+   for Exec_Dir use ".";
+
+
+   package Ide is
+      for Compiler_Command ("ada") use "gnatmake";
+   end Ide;
+
+   package Compiler is
+      for Default_Switches ("Ada")
+      	  	use ("-gnatwa",
+                   "-gnaty3abcdefhiklmnoprstux",
+                   "-Wall",
+                   "-O1",
+                   "-gnat05");
+   end Compiler;
+
+end Concurrent;

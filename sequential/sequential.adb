@@ -6,62 +6,73 @@ procedure Sequential is
    use Ada.Task_Identification;
    use Ada.Text_IO;
 
+   Child_Id : constant String := Image (Current_Task);
+
    type Reward is (Candy, No_Candy);
 
-   type Pez_Dispenser is
+   type Dispenser is
       record
          Available_Candies : Natural := 20;
       end record;
 
-   procedure Pop
-     (Dispenser : out Pez_Dispenser;
-      Result    : out Reward);
+   procedure Chew;
+   --  Hiding away the fact that we just need to waste some time to get the
+   --  point of this program across.
+
+   function Pop
+     (D : in out Dispenser)
+   return Reward;
    --  Get one of those delicious candies!
+
+   ------------
+   --  Chew  --
+   ------------
+
+   procedure Chew
+   is
+   begin
+      Put_Line (Child_Id & " is chewing on a candy.");
+      delay 1.0; --  This is some fast chewing indeed!
+   end Chew;
 
    -----------
    --  Pop  --
    -----------
 
-   procedure Pop
-     (Dispenser : out Pez_Dispenser;
-      Result    : out Reward)
+   function Pop
+     (D : in out Dispenser)
+     return Reward
    is
    begin
-      case Dispenser.Available_Candies is
+      case D.Available_Candies is
          when 0 =>
-            Result := No_Candy;
+            return No_Candy;
          when others =>
-            Result := Candy;
-
-            Dispenser.Available_Candies := Dispenser.Available_Candies - 1;
-
-            Put ("One Candy given to " & Image (Current_Task) & ".");
-            Put (Natural'Image (Dispenser.Available_Candies)
-                 & " left in the dispenser.");
-            New_Line;
+            D.Available_Candies := D.Available_Candies - 1;
+            Put_Line (Child_Id &
+                        " pops a candy from the dispenser.");
+            Put_Line (Natural'Image (D.Available_Candies) &
+                        " left in the dispenser");
+            return Candy;
       end case;
    end Pop;
 
-   Result    : Reward;
-   Dispenser : Pez_Dispenser;
+   Result        : Reward;
+   Pez_Dispenser : Dispenser;
 
 begin
 
+   A_Child_Popping_Pez :
    loop
-      Pop (Dispenser, Result);
+      Result := Pop (Pez_Dispenser);
 
-      if Result = Candy then
-         for i in 1 .. 1_000_000_000 loop
-            null;
-            --  Yea, this is pointless. It's just here to make your CPU work a
-            --  bit. Use your imagination and pretend that what's really going
-            --  on here is chewing of delicious candy!
-         end loop;
-      end if;
+      exit A_Child_Popping_Pez when Result = No_Candy;
 
-      exit when Result = No_Candy;
-   end loop;
+      Chew;
+   end loop A_Child_Popping_Pez;
 
-   Put_Line ("No more candy! I'll go out to play instead.");
+   Put_Line ("No more candy! "
+             & Child_Id
+             & " runs out to play.");
 
 end Sequential;

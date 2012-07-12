@@ -14,7 +14,7 @@ project Concurrent is
       	  	use ("-gnatwa",
                    "-gnaty3abcdefhiklmnoprstux",
                    "-Wall",
-                   "-O1",
+                   "-O2",
                    "-gnat05");
    end Compiler;
 

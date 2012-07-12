@@ -1,5 +1,6 @@
 This is a simple example on how to use tasks and protected objects in Ada to
-solve the problem of counting 20 times to 1_000_000_000.
+solve the problem of emptying a Pez dispenser. Yea, I know it's not the most 
+common of problems, but there you have it.
 
 The sequential program solves it sequentially while the concurrent program
 solves it by starting a bunch of concurrent workers.
@@ -7,7 +8,7 @@ solves it by starting a bunch of concurrent workers.
 To compile and execute:
 
    $ cd sequential
-   $ gnatmake sequential.adb
+   $ gnatmake -P sequential.gpr
    $ time sequential
 
 Substitute "sequential" with "concurrent" in the above to try the concurrent

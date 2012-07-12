@@ -14,8 +14,8 @@ project Sequential is
       	  	use ("-gnatwa",
                    "-gnaty3abcdefhiklmnoprstux",
                    "-Wall",
-                   "-O1",
-                   "-gnat05");
+                   "-O2",
+                   "-gnat2012");
    end Compiler;
 
 end Sequential;

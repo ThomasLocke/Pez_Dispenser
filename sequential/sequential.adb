@@ -6,7 +6,7 @@ procedure Sequential is
    use Ada.Task_Identification;
    use Ada.Text_IO;
 
-   Child_Id : constant String := Image (Current_Task);
+   Task_Id : constant String := Image (Current_Task);
 
    type Reward is (Candy, No_Candy);
 
@@ -15,25 +15,10 @@ procedure Sequential is
          Available_Candies : Natural := 20;
       end record;
 
-   procedure Chew;
-   --  Hiding away the fact that we just need to waste some time to get the
-   --  point of this program across.
-
    function Pop
      (D : in out Dispenser)
    return Reward;
    --  Get one of those delicious candies!
-
-   ------------
-   --  Chew  --
-   ------------
-
-   procedure Chew
-   is
-   begin
-      Put_Line (Child_Id & " is chewing on a candy.");
-      delay 1.0; --  This is some fast chewing indeed!
-   end Chew;
 
    -----------
    --  Pop  --
@@ -49,10 +34,9 @@ procedure Sequential is
             return No_Candy;
          when others =>
             D.Available_Candies := D.Available_Candies - 1;
-            Put_Line (Child_Id &
-                        " pops a candy from the dispenser.");
-            Put_Line (Natural'Image (D.Available_Candies) &
-                        " left in the dispenser");
+            Put_Line (Task_Id & " pops a candy from the dispenser.");
+            Put_Line (Natural'Image (D.Available_Candies)
+                      & " left in the dispenser");
             return Candy;
       end case;
    end Pop;
@@ -62,17 +46,15 @@ procedure Sequential is
 
 begin
 
-   A_Child_Popping_Pez :
-   loop
+   A_Child_Popping_Pez : loop
       Result := Pop (Pez_Dispenser);
 
       exit A_Child_Popping_Pez when Result = No_Candy;
 
-      Chew;
+      delay 1.0;
+      --  This simulates chewing. Yes, a 1 second chew is pretty darn fast!
    end loop A_Child_Popping_Pez;
 
-   Put_Line ("No more candy! "
-             & Child_Id
-             & " runs out to play.");
+   Put_Line ("No more candy! " & Task_Id & " runs out to play.");
 
 end Sequential;

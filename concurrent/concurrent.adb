@@ -10,41 +10,26 @@ procedure Concurrent is
 
    protected Pez_Dispenser is
       procedure Pop
-        (Result : out Reward);
+        (Result  : out Reward;
+         Task_Id : in  String);
       --  Get one of those delicious candies!
    private
       Available_Candies : Natural := 20;
    end Pez_Dispenser;
-
-   procedure Chew;
-   --  Hiding away the fact that we just need to waste some time to get the
-   --  point of this program across.
-
-   ------------
-   --  Chew  --
-   ------------
-
-   procedure Chew
-   is
-      Child_Id : constant String := Image (Current_Task);
-   begin
-      Put_Line (Child_Id & " is chewing on a candy.");
-      delay 1.0; --  This is some fast chewing indeed!
-   end Chew;
 
    ---------------------
    --  Pez_Dispenser  --
    ---------------------
 
    protected body Pez_Dispenser is
-   -----------
-   --  Pop  --
-   -----------
+      -----------
+      --  Pop  --
+      -----------
 
       procedure Pop
-        (Result : out Reward)
+        (Result  : out Reward;
+         Task_Id : in  String)
       is
-         Child_Id : constant String := Image (Current_Task);
       begin
          case Available_Candies is
             when 0 =>
@@ -54,9 +39,9 @@ procedure Concurrent is
 
                Available_Candies := Available_Candies - 1;
 
-               Put_Line (Child_Id & " pops a candy from the dispenser.");
-               Put_Line (Natural'Image (Available_Candies) &
-                           " left in the dispenser");
+               Put_Line (Task_Id & " pops a candy from the dispenser.");
+               Put_Line (Natural'Image (Available_Candies)
+                         & " left in the dispenser");
          end case;
       end Pop;
    end Pez_Dispenser;
@@ -72,21 +57,19 @@ procedure Concurrent is
 
    task body Child
    is
-      Child_Id : constant String := Image (Current_Task);
-      Result   : Reward;
+      Task_Id : constant String := Image (Current_Task);
+      Result  : Reward;
    begin
-      A_Child_Popping_Pez :
-      loop
-         Pez_Dispenser.Pop (Result);
+      A_Child_Popping_Pez : loop
+         Pez_Dispenser.Pop (Result, Task_Id);
 
          exit A_Child_Popping_Pez when Result = No_Candy;
 
-         Chew;
+         delay 1.0;
+      --  This simulates chewing. Yes, a 1 second chew is pretty darn fast!
       end loop A_Child_Popping_Pez;
 
-      Put_Line ("No more candy! "
-                & Child_Id
-                & " runs out to play.");
+      Put_Line ("No more candy! " & Task_Id & " runs out to play.");
    end Child;
 
    Alice  : Child;
